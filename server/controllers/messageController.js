@@ -5,7 +5,7 @@ const fetchMessages = async (req, res) => {
     try {
         const { chatId } = req.params
         
-        const allMessages= await Message.find({chat: chatId},{content:1, sender:1})
+        const allMessages= await Message.find({chat: chatId},{content:1, sender:1, createdAt:1})
         return res.json(allMessages)
     }
 

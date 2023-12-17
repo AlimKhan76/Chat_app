@@ -1,5 +1,7 @@
 const Chat = require("../Modals/chatModel");
 const User = require("../Modals/userModel");
+const Message = require("../Modals/messagesModel")
+
 
 const searchUser = async (req, res) => {
     try {
@@ -39,7 +41,13 @@ const fetchChat = async (req, res) => {
         if (chat.length != 0) {
             return res.json(chat)
         }
-        else {
+        const chats = await Chat.find({ _id: receiverId })
+        if (chats.length != 0) {
+            const  messages= await Message.find({chat :receiverId})
+            // return res.json({chats,messages})
+            return res.json(chats)
+        }
+        else{
             const chatName = await User.findOne({ _id: receiverId })
             const createdChat = await Chat.create({ username: chatName.email, users: [receiverId, token] })
             return res.json(createdChat)
@@ -49,17 +57,33 @@ const fetchChat = async (req, res) => {
     catch (err) {
         console.log(err)
     }
-
 }
 
 
-const createChat = () => {
+const retrieveChats = async (req, res) => {
     try {
+        const { chatId } = req.params
+        const chats = await Message.find({ chat: chatId })
+
+        return res.json(chats)
+
     }
     catch (err) {
         console.log(err)
     }
+}
 
+const searchExistingChats = async (req, res) => {
+    try {
+        const { id } = req.params
+        const username = await User.findOne({ _id: id }, { email: 1, _id: 0 })
+        const existingChats = await Chat.find({ users: id, username: { $ne: username.email } })
+        return res.json(existingChats)
+
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -68,4 +92,6 @@ const createChat = () => {
 
 
 
-module.exports = { searchUser, fetchChat }
+
+
+module.exports = { searchUser, fetchChat, searchExistingChats, retrieveChats }

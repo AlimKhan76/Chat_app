@@ -8,8 +8,6 @@ axios.defaults.baseURL = "http://localhost:3001";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  
     <App />
-  
 );
 

@@ -11,7 +11,8 @@ export const Login = () => {
     const submitHandler = (e) => {
         e.preventDefault()
         axios.post("/api/login", data).then((res) => {
-            localStorage.setItem("id", res.data._id)
+                console.log(res.data)
+            localStorage.setItem("userInfo", JSON.stringify(res.data))
             navigate("/chat")
         })
             .catch((err) => {
