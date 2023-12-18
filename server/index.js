@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === "production") {
 // --------------------------deployment------------------------------
 
 
-server.listen(port, () => {
+server.listen("https://chat-app-ruby-gamma-89.vercel.app", () => {
   console.log(`Example app listening on port ${port}`)
 })
 
