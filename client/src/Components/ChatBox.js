@@ -26,7 +26,8 @@ export const ChatBox = (chatInfo) => {
         if (chatInfo._id != undefined) {
             axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
                 if(res.data.length!==0){
-                setMessagesReceived([...messagesReceived,res.data])
+                    console.log(res.data)
+                setMessagesReceived(...messagesReceived,res.data)
                 }
 
             }))
