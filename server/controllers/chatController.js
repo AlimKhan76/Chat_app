@@ -49,7 +49,11 @@ const fetchChat = async (req, res) => {
         }
         else {
             const chatName = await User.find({ _id: receiverId })
-            const createdChat = await Chat.create({ username: chatName.email, users: [receiverId, token] })
+            const email = chatName.map((data) => {
+                return data.email
+            })
+                        
+            const createdChat = await Chat.create({ username: email[0], users: [receiverId, token] })
             return res.json(createdChat)
         }
 

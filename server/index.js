@@ -35,18 +35,16 @@ const io = require("socket.io")(server, {
   }
 })
 
-const users = []
+// const users = []
 io.on("connection", (socket) => {
   socket.on("setup", (localId) => {
     // arr.splice(0, 0, localId)
-    users[users.length + 1] = localId;
+    // users[users.length + 1] = localId;
 
     socket.join(localId)
-    console.log(localId)
     // socket.emit("Online", {localId})
   })
-  console.log(users)
-  socket.emit("Online", users)
+  // socket.emit("Online", users)
 
 
   socket.on("join chat", (chatId) => {
@@ -55,15 +53,16 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageReceived) => {
     let chat = newMessageReceived.chat
+    console.log(newMessageReceived)
 
     socket.to(chat).emit("message received", newMessageReceived)
 
   })
 
-  socket.on("disconnecting", (reason) => {
+  // socket.on("disconnecting", (reason) => {
     
-    delete users[socket.id]; // remove the user. -- maybe not the exact code
-  });
+  //   delete users[socket.id]; // remove the user. -- maybe not the exact code
+  // });
 
 
 

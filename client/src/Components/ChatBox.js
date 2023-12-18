@@ -51,6 +51,7 @@ export const ChatBox = (chatInfo) => {
 
     useEffect(() => {
         socket.on("message received", (newMessageReceived) => {
+            console.log(newMessageReceived)
             setMessagesReceived([...messagesReceived, newMessageReceived])
         })
     })
