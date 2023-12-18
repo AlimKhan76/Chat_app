@@ -3,7 +3,7 @@ import axios from "axios"
 import { ChatBox } from './ChatBox'
 import { io } from "socket.io-client"
 
-var ENDPOINT = "http://localhost:3001"
+var ENDPOINT ="https://chat-app-ark2-alimkhan76s-projects.vercel.app"
 var socket
 export const Chat = () => {
     const [userInfo, setUserInfo] = useState([])
