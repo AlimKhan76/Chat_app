@@ -25,7 +25,9 @@ export const ChatBox = (chatInfo) => {
     const fetchMessages = () => {
         if (chatInfo._id != undefined) {
             axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
+                if(res.data.length!==0){
                 setMessagesReceived([...messagesReceived,res.data])
+                }
 
             }))
                 .catch((err) => {
@@ -39,7 +41,7 @@ export const ChatBox = (chatInfo) => {
     useEffect(() => {
        
         fetchMessages()
-    }, [chatInfo])
+    }, [])
 
 
     // useEffect(()=>{
@@ -55,7 +57,7 @@ export const ChatBox = (chatInfo) => {
         //     setMessagesReceived([...messagesReceived, newMessageReceived])
         // })
         fetchMessages()
-    })
+    },[])
 
 
     const sendMessage = (e) => {
