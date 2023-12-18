@@ -1,51 +1,74 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { io } from "socket.io-client"
+
+
+let socket;
 
 export const ChatBox = (chatInfo) => {
+    let ENDPOINT = "http://localhost:3001"
 
     const [messageData, setMessageData] = useState({})
     const [messagesReceived, setMessagesReceived] = useState([])
     const navigate = useNavigate()
 
-    const localId= JSON.parse(localStorage.getItem("userInfo"))._id
+    const localId = JSON.parse(localStorage.getItem("userInfo"))._id
 
 
     const config = {
         headers: {
-            token:  JSON.parse(localStorage.getItem("userInfo"))._id
+            token: localId
         }
     }
 
     const fetchMessages = () => {
-        axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
-            setMessagesReceived(res.data)
-            console.log(res)
+        if (chatInfo._id != undefined) {
+            axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
+                setMessagesReceived(res.data)
 
-        }))
-            .catch((err) => {
-                console.log(err)
-            })
+            }))
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
+
     }
 
     useEffect(() => {
+       
         fetchMessages()
     }, [chatInfo])
 
 
+    useEffect(()=>{
+        socket = io(ENDPOINT)
+        socket.emit("setup", localId)
+        socket.emit("join chat", chatInfo._id)
+    },[])
+
+
+    useEffect(() => {
+        socket.on("message received", (newMessageReceived) => {
+            setMessagesReceived([...messagesReceived, newMessageReceived])
+        })
+    })
+
 
     const sendMessage = (e) => {
         e.preventDefault()
-
-
         const receiverId = chatInfo.users.filter((data) => {
 
-            return data !==  JSON.parse(localStorage.getItem("userInfo"))._id
+            return data !== JSON.parse(localStorage.getItem("userInfo"))._id
         })
-
         setMessageData({ ...messageData, readBy: receiverId[0], chat: chatInfo._id })
+        socket.emit("new message", messageData)
+
 
         axios.post('/api/send', { messageData }, config).then((res) => {
+            console.log(res.data)
+            setMessagesReceived([...messagesReceived, res.data])
             document.getElementById("messageForm").reset()
 
         })
@@ -56,12 +79,10 @@ export const ChatBox = (chatInfo) => {
 
 
     const handleSignOut = () => {
-        localStorage.removeItem("id")
+        localStorage.removeItem("userInfo")
         navigate("/login")
     }
 
-
-  
 
 
     return (
@@ -112,12 +133,12 @@ export const ChatBox = (chatInfo) => {
                 {messagesReceived && messagesReceived.map((data) => {
                     return (
                         <div key={data._id}>
-                        <div className={`${data.sender === localId && "float-right !bg-purple-700 text-white "} bg-gray-200 rounded-lg p-2.5 w-fit my-0.5  `} key={data._id}>
-                        <div >
-                            {data.content}
-                        </div>
-                        <p className="text-xs">{data.createdAt.slice(11,16)}</p>
-                        </div>
+                            <div className={`${data.sender === localId && "float-right !bg-purple-700 text-white "} bg-gray-200 rounded-lg p-2.5 w-fit my-0.5  `} key={data._id}>
+                                <div >
+                                    {data.content}
+                                </div>
+                                {/* <p className="text-xs">{data.createdAt === "" ? data.createdAt.slice(11, 16) : ""}</p> */}
+                            </div>
                         </div>
                     )
                 })}

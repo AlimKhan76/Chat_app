@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { ChatBox } from './ChatBox'
+import { io } from "socket.io-client"
 
+var ENDPOINT = "http://localhost:3001"
+var socket
 export const Chat = () => {
     const [userInfo, setUserInfo] = useState([])
     const [chatInfo, setChatInfo] = useState([])
     const [existedChats, setExistedChats] = useState([])
+    const [connection, setConnection] = useState([])
 
     const config = {
         headers: {
@@ -13,17 +17,35 @@ export const Chat = () => {
         }
     }
 
+    useEffect(() => {
+        socket = io(ENDPOINT, { transports: ['websocket'] })
+        socket.on("Online", ((arg) => setConnection([...connection, arg])))
+        // => { console.log(localId) })
+
+        existingChatSearcher()
+    }, [])
+
+
     const searchHandler = (email) => {
-        axios.get(`/api/search/${email}`, config).then((res) => {
-            setUserInfo(res.data.user)
-        })
-            .catch((err) => {
-                console.log(err)
+
+
+        if (email !== "") {
+            socket.on("Online", ((arg) => setConnection([...connection, arg])))
+            axios.get(`/api/search/${email}`, config).then((res) => {
+                setUserInfo(res.data.user)
+
             })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+        else {
+            setUserInfo([])
+        }
     }
 
 
-    const chatLoader =  (receiverId) => {
+    const chatLoader = (receiverId) => {
         axios.get(`/api/${receiverId}`, config).then((res) => {
             setChatInfo(res.data[0])
         })
@@ -32,7 +54,7 @@ export const Chat = () => {
             })
     }
 
-    const chatRetreiver =  (chatId) => {
+    const chatRetreiver = (chatId) => {
         axios.get(`/api/${chatId}`, config).then((res) => {
             setChatInfo(res.data[0])
         })
@@ -52,9 +74,7 @@ export const Chat = () => {
             })
     }
 
-    useEffect(() => {
-        existingChatSearcher()
-    }, [])
+
 
     return (
         <div className='bg-purple-700 h-screen grid grid-cols-3 overflow-hidden'>
@@ -75,7 +95,7 @@ export const Chat = () => {
                     />
                 </div>
 
-
+                {/* {console.log(connection)} */}
                 {userInfo.length !== 0 ? userInfo.map((data) => {
                     return (
 
@@ -88,12 +108,19 @@ export const Chat = () => {
                             <h1 className='text-2xl px-4 text-white' >
                                 {data.email}
                             </h1>
-
                             <div className='text-white px-5'>
+                                {/* {connection.map((id) => {
+                                    console.log("the id is "+ id)
+                                    return (
+                                        // id.equals(data._id) &&
+                                        <span
+                                            className={`max-w-sm ${id === data._id} && "text-green-500"}`} >{id == data._id ? "Online" : "Offline"}</span>)
+
+                                })} */}
 
 
-                                {/* <span className='max-w-sm '>kfkajfhaskjhfkjahfkah</span> */}
                             </div>
+
                         </div>
                     )
                 })
@@ -157,7 +184,7 @@ export const Chat = () => {
                 </div>
             </div> */}
 
-            <ChatBox {...chatInfo}/>
+            <ChatBox {...chatInfo} />
 
 
 

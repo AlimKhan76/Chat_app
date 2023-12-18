@@ -43,12 +43,12 @@ const fetchChat = async (req, res) => {
         }
         const chats = await Chat.find({ _id: receiverId })
         if (chats.length != 0) {
-            const  messages= await Message.find({chat :receiverId})
+            const messages = await Message.find({ chat: receiverId })
             // return res.json({chats,messages})
             return res.json(chats)
         }
-        else{
-            const chatName = await User.findOne({ _id: receiverId })
+        else {
+            const chatName = await User.find({ _id: receiverId })
             const createdChat = await Chat.create({ username: chatName.email, users: [receiverId, token] })
             return res.json(createdChat)
         }
@@ -76,8 +76,11 @@ const retrieveChats = async (req, res) => {
 const searchExistingChats = async (req, res) => {
     try {
         const { id } = req.params
-        const username = await User.findOne({ _id: id }, { email: 1, _id: 0 })
-        const existingChats = await Chat.find({ users: id, username: { $ne: username.email } })
+        const username = await User.find({ _id: id }, { email: 1, _id: 0 })
+        const email = username.map((data) => {
+            return data.email
+        })
+        const existingChats = await Chat.find({ users: id, username: { $ne: email[0] } })
         return res.json(existingChats)
 
     }
