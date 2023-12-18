@@ -7,7 +7,7 @@ import { io } from "socket.io-client"
 let socket;
 
 export const ChatBox = (chatInfo) => {
-    let ENDPOINT = "http://localhost:3001"
+    let ENDPOINT ="https://chat-app-ark2-alimkhan76s-projects.vercel.app"
 
     const [messageData, setMessageData] = useState({})
     const [messagesReceived, setMessagesReceived] = useState([])
