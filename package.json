@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm install --prefix client && npm install --prefix server && npm run build --prefix client && npm run start --prefix server ",
+    "build": "npm cache clean && npm install --prefix client && npm install --prefix server && npm run build --prefix client && npm run start --prefix server ",
     "start": "npx nodemon server/index.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
