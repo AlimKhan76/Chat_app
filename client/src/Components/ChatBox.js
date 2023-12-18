@@ -1,13 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { io } from "socket.io-client"
+// import { io } from "socket.io-client"
 
 
-let socket;
+// let socket;
 
 export const ChatBox = (chatInfo) => {
-    let ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
+    // let ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
 
     const [messageData, setMessageData] = useState({})
     const [messagesReceived, setMessagesReceived] = useState([])
@@ -25,7 +25,7 @@ export const ChatBox = (chatInfo) => {
     const fetchMessages = () => {
         if (chatInfo._id != undefined) {
             axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
-                setMessagesReceived(res.data)
+                setMessagesReceived([...messagesReceived,res.data])
 
             }))
                 .catch((err) => {
@@ -42,18 +42,19 @@ export const ChatBox = (chatInfo) => {
     }, [chatInfo])
 
 
-    useEffect(()=>{
-        socket = io(ENDPOINT)
-        socket.emit("setup", localId)
-        socket.emit("join chat", chatInfo._id)
-    },[])
+    // useEffect(()=>{
+    //     socket = io(ENDPOINT)
+    //     socket.emit("setup", localId)
+    //     socket.emit("join chat", chatInfo._id)
+    // },[])
 
 
     useEffect(() => {
-        socket.on("message received", (newMessageReceived) => {
-            console.log(newMessageReceived)
-            setMessagesReceived([...messagesReceived, newMessageReceived])
-        })
+        // socket.on("message received", (newMessageReceived) => {
+        //     console.log(newMessageReceived)
+        //     setMessagesReceived([...messagesReceived, newMessageReceived])
+        // })
+        fetchMessages()
     })
 
 
@@ -64,11 +65,11 @@ export const ChatBox = (chatInfo) => {
             return data !== JSON.parse(localStorage.getItem("userInfo"))._id
         })
         setMessageData({ ...messageData, readBy: receiverId[0], chat: chatInfo._id })
-        socket.emit("new message", messageData)
+        // socket.emit("new message", messageData)
 
 
         axios.post('/api/send', { messageData }, config).then((res) => {
-            console.log(res.data)
+            // console.log(res.data)
             setMessagesReceived([...messagesReceived, res.data])
             document.getElementById("messageForm").reset()
 

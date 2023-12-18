@@ -50,44 +50,44 @@ server.listen("https://chat-app-ruby-gamma-89.vercel.app", () => {
 // })
 
 
-const io = require("socket.io")(server, {
-  pingTimeOut: 60000,
-  cors: {
-    origin: "https://chat-app-ark2.vercel.app",
-    methods: ["GET", "POST"]
+// const io = require("socket.io")(server, {
+//   pingTimeOut: 60000,
+//   cors: {
+//     origin: "https://chat-app-ark2.vercel.app",
+//     methods: ["GET", "POST"]
 
-  }
-})
+//   }
+// })
 
-// const users = []
-io.on("connection", (socket) => {
-  socket.on("setup", (localId) => {
-    // arr.splice(0, 0, localId)
-    // users[users.length + 1] = localId;
+// // const users = []
+// io.on("connection", (socket) => {
+//   socket.on("setup", (localId) => {
+//     // arr.splice(0, 0, localId)
+//     // users[users.length + 1] = localId;
 
-    socket.join(localId)
-    // socket.emit("Online", {localId})
-  })
-  // socket.emit("Online", users)
+//     socket.join(localId)
+//     // socket.emit("Online", {localId})
+//   })
+//   // socket.emit("Online", users)
 
 
-  socket.on("join chat", (chatId) => {
-    socket.join(chatId)
-  })
+//   socket.on("join chat", (chatId) => {
+//     socket.join(chatId)
+//   })
 
-  socket.on("new message", (newMessageReceived) => {
-    let chat = newMessageReceived.chat
-    console.log(newMessageReceived)
+//   socket.on("new message", (newMessageReceived) => {
+//     let chat = newMessageReceived.chat
+//     console.log(newMessageReceived)
 
-    socket.to(chat).emit("message received", newMessageReceived)
+//     socket.to(chat).emit("message received", newMessageReceived)
 
-  })
+//   })
 
-  // socket.on("disconnecting", (reason) => {
+//   // socket.on("disconnecting", (reason) => {
     
-  //   delete users[socket.id]; // remove the user. -- maybe not the exact code
-  // });
+//   //   delete users[socket.id]; // remove the user. -- maybe not the exact code
+//   // });
 
 
 
-})
+// })

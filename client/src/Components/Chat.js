@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { ChatBox } from './ChatBox'
-import { io } from "socket.io-client"
+// import { io } from "socket.io-client"
 
-var ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
-var socket
+// var ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
+// var socket
 export const Chat = () => {
     const [userInfo, setUserInfo] = useState([])
     const [chatInfo, setChatInfo] = useState([])
     const [existedChats, setExistedChats] = useState([])
-    const [connection, setConnection] = useState([])
+    // const [connection, setConnection] = useState([])
 
     const config = {
         headers: {
@@ -18,8 +18,8 @@ export const Chat = () => {
     }
 
     useEffect(() => {
-        socket = io(ENDPOINT, { transports: ['websocket'] })
-        socket.on("Online", ((arg) => setConnection([...connection, arg])))
+        // socket = io(ENDPOINT, { transports: ['websocket'] })
+        // socket.on("Online", ((arg) => setConnection([...connection, arg])))
         // => { console.log(localId) })
 
         existingChatSearcher()
@@ -30,7 +30,7 @@ export const Chat = () => {
 
 
         if (email !== "") {
-            socket.on("Online", ((arg) => setConnection([...connection, arg])))
+            // socket.on("Online", ((arg) => setConnection([...connection, arg])))
             axios.get(`/api/search/${email}`, config).then((res) => {
                 setUserInfo(res.data.user)
 
