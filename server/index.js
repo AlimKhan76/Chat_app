@@ -53,7 +53,7 @@ server.listen("https://chat-app-ruby-gamma-89.vercel.app", () => {
 const io = require("socket.io")(server, {
   pingTimeOut: 60000,
   cors: {
-    origin: "*:*"
+    origin: "https://chat-app-ark2.vercel.app"
   }
 })
 
