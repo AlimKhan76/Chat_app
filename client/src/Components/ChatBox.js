@@ -10,7 +10,7 @@ export const ChatBox = (chatInfo) => {
     // let ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
 
     const [messageData, setMessageData] = useState({})
-    const [messagesReceived, setMessagesReceived] = useState([])
+    const [messagesReceived, setMessagesReceived] = useState()
     const navigate = useNavigate()
 
     const localId = JSON.parse(localStorage.getItem("userInfo"))._id
@@ -27,7 +27,7 @@ export const ChatBox = (chatInfo) => {
             axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
                 if(res.data.length!==0){
                     console.log(res.data)
-                setMessagesReceived(...messagesReceived,res.data)
+                setMessagesReceived(res.data)
                 }
 
             }))
