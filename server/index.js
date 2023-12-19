@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors")
 const app = express()
+const server = require('http').createServer(app);
 require('dotenv').config()
 
 const connectToMongo = require("./db");
@@ -19,7 +20,7 @@ app.use("/api/chat", chatRoutes)
 app.use("/api/message", messageRoutes)
 
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Example app listening on port ${process.env.PORT}`)
 })
 
