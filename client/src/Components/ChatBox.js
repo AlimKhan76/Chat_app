@@ -2,19 +2,20 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 // import { io } from "socket.io-client"
-
-
 // let socket;
+// let ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
 
+// The id of the user currently logged in 
 export const ChatBox = (chatInfo) => {
-    // let ENDPOINT ="https://chat-app-ruby-gamma-89.vercel.app"
+    let localId = JSON.parse(localStorage.getItem("userInfo"))._id
 
+    // Stores the current message data that is being sent
     const [messageData, setMessageData] = useState({})
-    const [messagesReceived, setMessagesReceived] = useState()
+
+    // Stores the messages received
+    const [messagesReceived, setMessagesReceived] = useState([])
+
     const navigate = useNavigate()
-
-    const localId = JSON.parse(localStorage.getItem("userInfo"))._id
-
 
     const config = {
         headers: {
@@ -22,12 +23,18 @@ export const ChatBox = (chatInfo) => {
         }
     }
 
+    function updateScroll() {
+        var element = document.getElementById("chatbox");
+        element.scrollTop = element.scrollHeight;
+    }
+
+
+    // Fetches all the messages
     const fetchMessages = () => {
-        if (chatInfo._id != undefined) {
-            axios.get(`/api/fetch/${chatInfo._id}`, config).then((res => {
-                if(res.data.length!==0){
-                    console.log(res.data)
-                setMessagesReceived(res.data)
+        if (chatInfo._id !== "" || chatInfo._id !== undefined) {
+            axios.get(`/api/message/fetch/${chatInfo._id}`, config).then((res => {
+                if (messagesReceived.length < res.data.length) {
+                    setMessagesReceived(res.data)
                 }
 
             }))
@@ -36,13 +43,11 @@ export const ChatBox = (chatInfo) => {
                 })
         }
 
-
     }
 
-    useEffect(() => {
-       
-        fetchMessages()
-    })
+
+
+
 
 
     // useEffect(()=>{
@@ -52,30 +57,27 @@ export const ChatBox = (chatInfo) => {
     // },[])
 
 
-    useEffect(() => {
-        // socket.on("message received", (newMessageReceived) => {
-        //     console.log(newMessageReceived)
-        //     setMessagesReceived([...messagesReceived, newMessageReceived])
-        // })
-        fetchMessages()
-    },[])
+    // useEffect(() => {
+    // socket.on("message received", (newMessageReceived) => {
+    //         console.log(newMessageReceived)
+    //         setMessagesReceived([...messagesReceived, newMessageReceived])
+    //     })
+    //     fetchMessages()
+    // }, [])
 
 
+    // Sends messages 
     const sendMessage = (e) => {
         e.preventDefault()
         const receiverId = chatInfo.users.filter((data) => {
-
-            return data !== JSON.parse(localStorage.getItem("userInfo"))._id
+            return data !== localId
         })
         setMessageData({ ...messageData, readBy: receiverId[0], chat: chatInfo._id })
         // socket.emit("new message", messageData)
 
-
-        axios.post('/api/send', { messageData }, config).then((res) => {
-            // console.log(res.data)
+        axios.post('/api/message/send', { messageData }, config).then((res) => {
             setMessagesReceived([...messagesReceived, res.data])
             document.getElementById("messageForm").reset()
-
         })
             .catch((err) => {
                 console.log(err)
@@ -83,18 +85,33 @@ export const ChatBox = (chatInfo) => {
     }
 
 
+
+    // Logs the user out
     const handleSignOut = () => {
         localStorage.removeItem("userInfo")
         navigate("/login")
     }
 
+    //    Runs the first time the component renders and put the scroller to the bottom
+    useEffect(() => {
+        fetchMessages()
+        updateScroll()
+    }, [])
 
+    // Keeps running to see if there are any new messages
+    useEffect(() => {
+        fetchMessages()
+        updateScroll()
+
+    })
 
     return (
-
         <div className='col-span-2 bg-white'>
+
             <div className='flex w-full shadow-md'>
+
                 <h1 className='text-3xl p-10 w-11/12 '>{chatInfo.username ? chatInfo.username : ""}</h1>
+
                 <div className="group relative ml-3 justify-end flex items-center right-0">
                     <div>
                         <button type="button"
@@ -133,16 +150,21 @@ export const ChatBox = (chatInfo) => {
 
             </div>
 
-            <div className='h-2/5 mx-10 mt-10 overflow-scroll flex flex-col scrollbar-hide  ' id='chatbox'>
+            <div
+                className='h-[32rem] mx-10 mt-10 overflow-scroll flex flex-col scrollbar-hide no-overflow-anchoring'
+                id='chatbox'>
                 {/* <div className=' justify-end  '> */}
                 {messagesReceived && messagesReceived.map((data) => {
                     return (
                         <div key={data._id}>
-                            <div className={`${data.sender === localId && "float-right !bg-purple-700 text-white "} bg-gray-200 rounded-lg p-2.5 w-fit my-0.5  `} key={data._id}>
+                            <div
+                                className={`${data.sender === localId && "float-right !bg-purple-700 text-white "} bg-gray-200 rounded-lg p-2.5 w-fit my-0.5`} key={data._id}>
                                 <div >
                                     {data.content}
                                 </div>
-                                {/* <p className="text-xs">{data.createdAt === "" ? data.createdAt.slice(11, 16) : ""}</p> */}
+                                <p className="text-xs">
+                                    {data.createdAt !== "" ? data.createdAt.slice(11, 16) : ""}
+                                </p>
                             </div>
                         </div>
                     )
@@ -154,7 +176,7 @@ export const ChatBox = (chatInfo) => {
             <form
                 id='messageForm'
                 className='group flex bottom-0 absolute w-4/6'
-                onClick={sendMessage} >
+                onSubmit={sendMessage} >
                 <input
                     type="text"
                     name="content"
