@@ -44,6 +44,19 @@ export const ChatBox = (chatInfo) => {
         }
 
     }
+    
+     //    Runs the first time the component renders and put the scroller to the bottom
+     useEffect(() => {
+        fetchMessages()
+        updateScroll()
+    }, [])
+
+    // Keeps running to see if there are any new messages
+    useEffect(() => {
+        fetchMessages()
+        updateScroll()
+    })
+    
 
 
 
@@ -91,19 +104,6 @@ export const ChatBox = (chatInfo) => {
         localStorage.removeItem("userInfo")
         navigate("/login")
     }
-
-    //    Runs the first time the component renders and put the scroller to the bottom
-    useEffect(() => {
-        fetchMessages()
-        updateScroll()
-    }, [])
-
-    // Keeps running to see if there are any new messages
-    useEffect(() => {
-        fetchMessages()
-        updateScroll()
-
-    })
 
     return (
         <div className='col-span-2 bg-white'>
