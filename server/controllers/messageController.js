@@ -19,8 +19,8 @@ const fetchMessages = async (req, res) => {
 const sendMessage = async (req, res) => {
     try {
         const { messageData } = req.body
-        const { token } = req.headers
-        const message = await Message.create({ ...messageData, sender: token })
+        const { token, chat } = req.headers
+        const message = await Message.create({ ...messageData, chat, sender: token })
         if (message) {
             return res.json(message)
         }

@@ -10,16 +10,19 @@ export const ChatBox = (chatInfo) => {
     let localId = JSON.parse(localStorage.getItem("userInfo"))._id
 
     // Stores the current message data that is being sent
-    const [messageData, setMessageData] = useState({})
+    const [messageData, setMessageData] = useState({chat: chatInfo._id})
 
     // Stores the messages received
     const [messagesReceived, setMessagesReceived] = useState([])
+
+    const[effect,setEffect]=useState(true)
 
     const navigate = useNavigate()
 
     const config = {
         headers: {
-            token: localId
+            token: localId,
+            chat: chatInfo._id
         }
     }
 
@@ -33,9 +36,12 @@ export const ChatBox = (chatInfo) => {
     const fetchMessages = () => {
         if (chatInfo._id !== "" || chatInfo._id !== undefined) {
             axios.get(`/api/message/fetch/${chatInfo._id}`, config).then((res => {
-                if (messagesReceived.length < res.data.length) {
+                // if(res.data.length>0){
+                //     setEffect(!effect)
+                // }
+                // if (messagesReceived.length < res.data.length) {
                     setMessagesReceived(res.data)
-                }
+                // }
 
             }))
                 .catch((err) => {
@@ -85,7 +91,7 @@ export const ChatBox = (chatInfo) => {
         const receiverId = chatInfo.users.filter((data) => {
             return data !== localId
         })
-        setMessageData({ ...messageData, readBy: receiverId[0], chat: chatInfo._id })
+        setMessageData({ ...messageData, readBy: receiverId[0]})
         // socket.emit("new message", messageData)
 
         axios.post('/api/message/send', { messageData }, config).then((res) => {
