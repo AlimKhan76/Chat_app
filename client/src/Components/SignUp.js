@@ -4,80 +4,97 @@ import axios from "axios"
 
 export const SignUp = () => {
 
+    // State for storing the email and password
     const [data, setData] = useState({})
+
+    //State for displaying any errors 
     const [error, setError] = useState({});
+
     const navigate = useNavigate();
 
-    const passwordHandler = () => {
+    //Checks if both the password are the same
+    const passwordChecker = () => {
         const password = document.getElementById('password')
         const confirmPassword = document.getElementById('confirmPassword')
+
         if (password.value !== confirmPassword.value) {
-            setError({message :"Password Do Not Match"})
+            setError({ message: "Password Do Not Match" })
             return false;
         }
-        else{
+        else {
             return true
         }
-    
+
     }
 
 
-    const signUp = (e) => {
-
+    // Sends the request to Sign Up
+    const signUpHandler = (e) => {
         e.preventDefault();
-        if(passwordHandler()){
-        axios.post("/api/", { data }).then((res) => {
-            if (res.data.success) {
-                navigate("/success")
-            }
-            else {
-                console.log(res.data.message)
-            }
 
-        })
-            .catch((err) => {
-                setError(err.response.data)
-                setTimeout(() => {
-                    setError({})
+        if (passwordChecker()) {
+            axios.post("/api/user/", { data }).then((res) => {
 
-                }, 1500);
-            })}
+                if (res.data.success) {
+                    navigate("/success")
+                }
+                else {
+                    console.log(res.data.message)
+                }
+
+            })
+                .catch((err) => {
+                    setError(err.response.data)
+                    // Removing the error message after 1.5 seconds
+                    setTimeout(() => {
+                        setError({})
+                    }, 1500);
+                })
+        }
     }
 
     return (
-        <div className='bg-purple-700 h-screen '>
+        <div className='bg-gradient-to-b from-pink-400  to-purple-800 h-screen '>
 
+            {/* The Heading Section start*/}
             <h1 className='text-5xl p-5 items-center justify-center flex'>
-                <span className=' text-white'>
+                <strong className=' text-white'>
                     Sign Up
-                </span>
-                <span className='px-5 '>
+                </strong>
+                <strong className='px-5 '>
                     /
-                    <Link to="/login">Login</Link>
-                </span>
+                    <Link to="/login">
+                        Login
+                    </Link>
+                </strong>
             </h1>
+            {/* The Heading Section end*/}
 
 
-            <div className='flex items-center justify-center'>
+            {/* Image and the form section Start*/}
+            <div className='flex-row items-center justify-center'>
 
-
-
-
-                {/* <div>
+                <div className='flex items-center justify-center'>
                     <img
-                    className='bg-transparent transaprent' src="../../public/Login.png" alt="" />
-                </div> */}
-                <form className="max-w-screen-lg w-2/4 mx-auto py-5" onSubmit={signUp}
-                method='post'>
+                        className='w-40 rounded-full'
+                        src=" https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+                        alt="Login.png" />
+                </div>
 
 
+                <form
+                    className="max-w-screen-lg w-2/4 mx-auto py-5"
+                    onSubmit={signUpHandler}
+                    method='post'>
+
+                    {/* Display if there are any errors */}
                     {error.hasOwnProperty('message') &&
-                        <div className='  flex pb-5 justify-center items-center'>
+                        <div className='flex pb-5 justify-center items-center'>
                             <div
                                 className="bg-red-100 w-3/4 border text-center border-red-400 text-red-700 px-4 py-3 rounded-2xl relative"
                                 role="alert">
                                 <strong className="font-bold ">{error.message}</strong>
-                                <span className=" absolute top-0 bottom-0 right-0 px-4 py-3">
+                                <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
                                     <svg
                                         className="fill-current h-6 w-6  text-red-500"
                                         role="button"
@@ -95,16 +112,15 @@ export const SignUp = () => {
                         </div>
                     }
 
-                    
+
                     <div className="mb-5 ">
-
-
                         <input
                             name='email'
                             type="email"
                             id="email"
-                            className="border-4 border-white bg-purple-700 text-white 
-                            text-lg rounded-2xl block w-full px-10 py-2.5  placeholder:text-white"
+                            className="autofill:shadow-[inset_0_0_0px_1000px_rgb(244,114,182)] 
+                            border-4 border-white bg-inherit text-white 
+                            text-lg rounded-xl block w-full px-10 py-2.5 placeholder:text-white focus:outline-none"
                             placeholder='Email ID'
                             required=""
                             onChange={(e) => {
@@ -112,14 +128,14 @@ export const SignUp = () => {
                             }}
                         />
                     </div>
-                    <div className="mb-5">
 
+                    <div className="mb-5">
                         <input
                             name='password'
                             type="password"
                             id="password"
-                            className="border-4 border-white bg-purple-700 text-white 
-                            text-lg rounded-2xl block w-full px-10 py-2.5  placeholder:text-white"
+                            className="border-4 border-white bg-inherit text-white 
+                            text-lg rounded-xl block w-full px-10 py-2.5 placeholder:text-white focus:outline-none"
                             placeholder='Create Password'
                             required=""
                             onChange={(e) => {
@@ -127,34 +143,33 @@ export const SignUp = () => {
                             }}
                         />
                     </div>
-                    <div className="mb-5">
 
+                    <div className="mb-5">
                         <input
                             type="password"
                             id="confirmPassword"
-                            className="border-4 border-white bg-purple-700 text-white 
-                            text-lg rounded-2xl block w-full px-10 py-2.5  placeholder:text-white"
+                            className="border-4 border-white bg-inherit text-white 
+                            text-lg rounded-xl block w-full px-10 py-2.5  placeholder:text-white 
+                             focus:outline-none"
                             placeholder='Confirm Password'
                             required=""
                         />
                     </div>
-                    <div className='items-center justify-center flex'>
 
+                    <div className='items-center justify-center flex'>
                         <button
                             type="submit"
-                            className=" text-purple-700 bg-white hover:bg-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-2xl text-lg w-full sm:w-auto px-5 py-2.5 text-center"
-                            >
+                            className="text-inherit bg-white hover:bg-white focus:ring-4 focus:outline-none focus:ring-white 
+                             rounded-2xl text-xl w-full sm:w-auto px-10 py-5 text-center font-bold"
+                        >
                             Sign In
                         </button>
                     </div>
                 </form>
 
 
-
-
             </div>
-
-
+            {/* Image and the form section end*/}
 
         </div>
     )

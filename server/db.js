@@ -1,13 +1,10 @@
 const mongoose = require("mongoose")
 
-
-const uri="mongodb+srv://coder34521:Ru3eOcZc9RMhYCI0@cluster0.pq9euua.mongodb.net/"
-
-const connectToMongo =()=>{
-    try{
-    mongoose.connect(uri)
+const connectToMongo = () => {
+    try {
+        mongoose.connect(process.env.MONGO_DB_URI)
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 }

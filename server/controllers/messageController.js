@@ -1,11 +1,10 @@
-const Message = require("../Modals/messagesModel")
+const Message = require("../Models/messagesModel")
 
-//fetches messages
+// Fetches the messages using chatId
 const fetchMessages = async (req, res) => {
     try {
         const { chatId } = req.params
-        
-        const allMessages= await Message.find({chat: chatId},{content:1, sender:1, createdAt:1})
+        const allMessages = await Message.find({ chat: chatId }, { content: 1, sender: 1, createdAt: 1 })
         return res.json(allMessages)
     }
 
@@ -16,14 +15,12 @@ const fetchMessages = async (req, res) => {
 
 }
 
-//Send Messages
+// Save the Message 
 const sendMessage = async (req, res) => {
     try {
         const { messageData } = req.body
-        const { token } = req.headers
-
-        const message = await Message.create({ ...messageData, sender: token })
-
+        const { token, chat } = req.headers
+        const message = await Message.create({ ...messageData, chat, sender: token })
         if (message) {
             return res.json(message)
         }

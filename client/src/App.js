@@ -1,10 +1,8 @@
-import './App.css';
 import { Chat } from './Components/Chat';
 import { Login } from './Components/Login';
 import { SignUp } from './Components/SignUp';
 import { SuccessfulRegisteration } from './Components/SuccessfulRegisteration';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
 
 function App() {
   return (
@@ -14,10 +12,7 @@ function App() {
         <Route exact path='/success' element={<SuccessfulRegisteration />} />
         <Route exact path='/login' element={<Login />} />
         <Route exact path='/chat' element={<Chat />} />
-
       </Routes>
-
-
     </BrowserRouter>
   );
 }
